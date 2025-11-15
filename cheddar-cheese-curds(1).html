@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!-- saved from url=(0166)https://shop.tillamook.com/web-pixels@ae1676cfwd2530674p4253c800m34e853cb/custom/web-pixel-22118633@11/sandbox/modern/collections/cheese/products/cheddar-cheese-curds -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Cheddar Cheese Curds – Tillamook Shop</title>
+    <script src="./sae1676cfwd2530674p4253c800m34e853cbm.js.download"></script>
+
+    <script type="text/javascript">
+  (function(shopify) {shopify.extend('WebPixel::Render', function(api) {
+var analytics=api.analytics,browser=api.browser,init=api.init;
+const TAG_ID = 'G-FELYTDG2GV';
+const TAG_ID2 = 'G-SMN5GCGNBC';
+
+const script = document.createElement('script');
+script.setAttribute('src', `https://www.googletagmanager.com/gtag/js?id=${TAG_ID}`);
+script.setAttribute('async', '');
+document.head.appendChild(script);
+
+window.dataLayer = window.dataLayer || [];
+
+function gtag() {
+    dataLayer.push(arguments);
+}
+
+gtag('js', new Date());
+gtag('config', TAG_ID, {'send_page_view': false});
+
+// Step 2. Subscribe to customer events using the analytics.subscribe() API
+const sendGAEvent = (eventName, eventData) => {
+    gtag("event", eventName, eventData);
+};
+
+const createItemData = (merchandise) => {
+    return {
+        item_id: merchandise.sku || merchandise.product.id,
+        item_name: merchandise.product.title,
+        item_variant: merchandise.title,
+        currency: merchandise.price.currencyCode,
+        item_category: merchandise.product.type,
+        item_brand: merchandise.product.vendor,
+        price: merchandise.price.amount,
+    };
+};
+
+const createCartLineItemsData = (lineItems) => {
+    return lineItems.map((item) => {
+        return {
+            item_id: item.merchandise.sku || item.merchandise.product.id,
+            item_name: item.merchandise.product.title,
+            item_variant: item?.merchandise.title,
+            currency: item.merchandise.price.currencyCode,
+            item_category: item.merchandise.product.type,
+            item_brand: item.merchandise.product.vendor,
+            price: item.merchandise.price.amount,
+            quantity: item.quantity,
+        };
+    });
+};
+
+const createLineItemsData = (lineItems) => {
+    return lineItems.map((item) => {
+        return {
+            item_id: item.variant.sku || item.variant.product.id,
+            item_name: item.title,
+            item_variant: item?.variant.title,
+            currency: item.variant.price.currencyCode,
+            item_category: item.variant.product.type,
+            item_brand: item.variant.product.vendor,
+            price: item.variant.price.amount,
+            quantity: item.quantity,
+        };
+    });
+};
+
+
+analytics.subscribe("collection_viewed", (event) => {
+    const { id, title } = event.data.collection;
+    const itemList = event.data.collection.productVariants;
+
+    const lineItems = itemList.map(item => ({
+        item_id: item.sku || item.product.id,
+        item_name: item.product.title,
+        item_category: item.product.type,
+        item_brand: item.product.vendor,
+        price: item.price.amount
+    }));
+
+    gtag('event', 'view_item_list', {
+        item_list_id: id,
+        item_list_name: title,
+        items: lineItems,
+        send_to: TAG_ID2
+    });
+});
+
+analytics.subscribe("product_removed_from_cart", (event) => {
+    const itemData = createItemData(event.data.cartLine.merchandise);
+    sendGAEvent("remove_from_cart", {
+        currency: event.data.cartLine.cost.totalAmount.currencyCode,
+        value: event.data.cartLine.cost.totalAmount.amount,
+        items: [Object.assign(itemData, {quantity: event.data.cartLine.quantity})],
+    });
+});
+
+analytics.subscribe("cart_viewed", (event) => {
+    const totalCartCost = event.data.cart.cost.totalAmount.amount;
+    const lineItems = createCartLineItemsData(event.data.cart.lines);
+
+    gtag('event', 'view_cart', {
+        currency: event.data.cart.cost.totalAmount.currencyCode,
+        value: totalCartCost,
+        items: lineItems,
+        send_to: TAG_ID2
+    });
+});
+
+analytics.subscribe("checkout_shipping_info_submitted", (event) => {  
+    const checkoutData = ga4CheckoutEvents(event);
+    //sendGAEvent("add_shipping_info", checkoutData);
+    gtag('event', 'add_shipping_info', {
+        checkoutData,
+        send_to: TAG_ID2
+    });
+});
+
+function ga4CheckoutEvents(event) {
+    const {checkout} = event.data;
+    const lineItems = createLineItemsData(checkout.lineItems);
+    return {
+        currency: checkout.totalPrice.currencyCode,
+        value: checkout.totalPrice.amount,
+        items: lineItems,
+    };
+}
+});})(self.webPixelsManager.createShopifyExtend('22118633', 'custom'));
+
+</script>
+
+  <script src="./js" async=""></script></head>
+  <body>
+
+</body></html>
